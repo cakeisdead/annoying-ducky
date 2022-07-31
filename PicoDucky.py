@@ -41,7 +41,6 @@ class PicoDucky:
 
     def __init__(self, file_path, file_type = ""):
         self.__file_path = file_path
-        self.__file_type = file_type
         self.__kbd = Keyboard(usb_hid.devices)
         self.__layout = KeyboardLayout(self.__kbd)
         self.__led.direction = digitalio.Direction.OUTPUT
@@ -114,13 +113,11 @@ class PicoDucky:
     def plain_text_type(self, oled):
         sleep(3)
         self.__led.value = True
-        song_path = self.__file_path
-        with open(song_path,"r",encoding='utf-8') as f:
+        file_path = self.__file_path
+        with open(file_path,"r",encoding='utf-8') as f:
             for line in f:
                     #oled.show_wrapped_line(line)
                     oled.bongo()
                     self.parseLine('STRING ' + line)
                     self.parseLine('DELAY 250')
         self.__led.value = False
-
-

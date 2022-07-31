@@ -17,7 +17,7 @@ from adafruit_display_text import label, wrap_text_to_lines
 class Boto():
     menus = {
                 'active':'main',
-                'main':['Mouse Wiggle','Bongo','Type','OSX Ducky'],
+                'main':['Type','OSX Ducky','Win Ducky','Stay-Awake'],
                 'type':[f for f in os.listdir('text_files') if not f.startswith('.')],
                 'osx_ducky':[f for f in os.listdir('osx_ducky') if not f.startswith('.')]
                 }
@@ -67,28 +67,19 @@ class Boto():
         self.oled.show_menu(self.visible_menu())     
 
     def select_option(self, menu):
-        print(menu)
-        if self.menus[menu][1] == 'Bongo':
-            self.oled.bongo()
-        if self.menus[menu][1] == 'Mouse Wiggle':
-            #mouse_jiggle()
-            self.oled.bongo()
         if self.menus[menu][1] == 'Type':
             self.menus['active'] = 'type'
-            self.oled.show_menu('type')
+            self.oled.show_menu(self.visible_menu()) 
             time.sleep(0.5)
         if self.menus[menu][1] == 'OSX Ducky':
             self.menus['active'] = 'osx_ducky'
-            self.oled.show_menu('osx_ducky')
+            self.oled.show_menu(self.visible_menu())
             time.sleep(0.5)
         if menu == 'type':
             k = PicoDucky(f'text_files/{self.menus[menu][1]}')
             k.plain_text_type(self.oled)
             self.menus['active'] = 'main'
-            self.oled.show_menu(self.visible_menu())
         if menu == 'osx_ducky':
             ducky = PicoDucky(f'osx_ducky/{self.menus[menu][1]}')
             ducky.run_script()
             self.menus['active'] = 'main'
-            self.oled.show_menu()
-
