@@ -39,7 +39,7 @@ class PicoDucky:
         'F12': Keycode.F12,
     }
 
-    def __init__(self, file_path, file_type = ""):
+    def __init__(self, file_path="", file_type = ""):
         self.__file_path = file_path
         self.__kbd = Keyboard(usb_hid.devices)
         self.__layout = KeyboardLayout(self.__kbd)
@@ -121,3 +121,9 @@ class PicoDucky:
                     self.parseLine('STRING ' + line)
                     self.parseLine('DELAY 250')
         self.__led.value = False
+    def keep_alive(self, oled):
+        win = self.__duckyCommands.get('WINDOWS', None)
+        tab = self.__duckyCommands.get('TAB', None)
+        self.__kbd.press(win, tab)
+        self.__kbd.release_all()
+        oled.bongo()

@@ -75,6 +75,13 @@ class Boto():
             self.menus['active'] = 'osx_ducky'
             self.oled.show_menu(self.visible_menu())
             time.sleep(0.5)
+        if self.menus[menu][1] == 'Stay-Awake':
+            k = PicoDucky()
+            running = True
+            while running:
+                k.keep_alive(self.oled)
+                if self.cancel.value:
+                    running = False
         if menu == 'type':
             k = PicoDucky(f'text_files/{self.menus[menu][1]}')
             k.plain_text_type(self.oled)
