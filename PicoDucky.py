@@ -95,11 +95,12 @@ class PicoDucky:
             newScriptLine = self.convertLine(line)
             self.runScriptLine(newScriptLine)
 
-    def run_script(self):
+    def run_script(self, oled, cancel_button):
         duckyScriptPath = self.__file_path
         f = open(duckyScriptPath,"r",encoding='utf-8')
         previousLine = ""
         for line in f: 
+            oled.bongo()
             line = line.rstrip()
             if(line[0:6] == "REPEAT"):
                 for i in range(int(line[7:])):
@@ -109,8 +110,10 @@ class PicoDucky:
             else:
                 self.parseLine(line)
                 previousLine = line
+            if cancel_button.value:
+                break
             sleep(float(self.__default_delay)/1000)
-    def plain_text_type(self, oled):
+    def plain_text_type(self, oled, cancel_button):
         sleep(3)
         self.__led.value = True
         file_path = self.__file_path
@@ -119,6 +122,8 @@ class PicoDucky:
                     #oled.show_wrapped_line(line)
                     oled.bongo()
                     self.parseLine('STRING ' + line)
+                    if cancel_button.value:
+                        break
                     self.parseLine('DELAY 250')
         self.__led.value = False
     def keep_alive(self, oled):

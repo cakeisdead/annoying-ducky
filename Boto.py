@@ -84,9 +84,9 @@ class Boto():
                     running = False
         if menu == 'type':
             k = PicoDucky(f'text_files/{self.menus[menu][1]}')
-            k.plain_text_type(self.oled)
+            k.plain_text_type(self.oled, self.cancel)
             self.menus['active'] = 'main'
         if menu == 'osx_ducky':
             ducky = PicoDucky(f'osx_ducky/{self.menus[menu][1]}')
-            ducky.run_script()
+            ducky.run_script(self.oled, self.cancel)
             self.menus['active'] = 'main'
