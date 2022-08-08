@@ -19,8 +19,14 @@ class Boto():
                 'active':'main',
                 'main':['Type','OSX Ducky','Win Ducky','Stay-Awake'],
                 'type':[f for f in os.listdir('text_files') if not f.startswith('.')],
-                'osx_ducky':[f for f in os.listdir('osx_ducky') if not f.startswith('.')]
+                'osx_ducky':[f for f in os.listdir('osx_ducky') if not f.startswith('.')],
+                'script_actions':['Execute','Add to Playlist']
                 }
+    active_script = {
+        'file_name':'',
+        'path':'',
+        'type':''
+    }
     
     def __init__(self):
         # Initialize Oled 
@@ -49,13 +55,21 @@ class Boto():
             if self.select.value:
                 self.select_option(self.menus['active'])
             if self.cancel.value:
-                self.menus['active'] = 'main'
+                if self.menus['active'] == 'script_actions':
+                    self.menus['active'] = self.active_script['type']
+                    self.active_script.clear()
+                else:
+                    self.menus['active'] = 'main'
                 self.oled.show_menu(self.visible_menu())
+                time.sleep(0.2)
     
     def visible_menu(self):
-        lines = '  ' + self.menus[self.menus['active']][0] + '\n'
-        lines += '> ' + self.menus[self.menus['active']][1] + '\n'
-        lines += '  ' + self.menus[self.menus['active']][2] + '\n'
+        try:
+            lines = '  ' + self.menus[self.menus['active']][0] + '\n'
+            lines += '> ' + self.menus[self.menus['active']][1] + '\n'
+            lines += '  ' + self.menus[self.menus['active']][2] + '\n'
+        except:
+            pass
         return lines
     
     def menu_nav(self, active_menu, direction):
@@ -82,11 +96,19 @@ class Boto():
                 k.keep_alive(self.oled)
                 if self.cancel.value:
                     running = False
-        if menu == 'type':
-            k = PicoDucky(f'text_files/{self.menus[menu][1]}')
-            k.plain_text_type(self.oled, self.cancel)
-            self.menus['active'] = 'main'
-        if menu == 'osx_ducky':
-            ducky = PicoDucky(f'osx_ducky/{self.menus[menu][1]}')
-            ducky.run_script(self.oled, self.cancel)
-            self.menus['active'] = 'main'
+        if menu == 'type' or menu == 'osx_ducky':
+            self.active_script['name'] = self.menus[menu][1]
+            self.active_script['path'] = 'text_files/' if menu == 'type' else 'osx_ducky/'
+            self.active_script['type'] = menu
+            self.menus['active'] = 'script_actions'
+            self.oled.show_menu(self.visible_menu()) 
+            time.sleep(0.5)
+        if self.menus[menu][1] == 'Execute':
+            k = PicoDucky(self.active_script['path'] + self.active_script['name'])
+            if self.active_script['type'] == 'type':
+                k.plain_text_type(self.oled, self.cancel)
+            elif self.active_script['type'] == 'osx_ducky':
+                k.run_script(self.oled, self.cancel)
+            self.menus['active'] = self.active_script['type']
+            self.oled.show_menu(self.visible_menu()) 
+            time.sleep(0.5)
