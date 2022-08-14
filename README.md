@@ -1,4 +1,6 @@
-![annoying-ducky](./img/header.png)
+<p align="center">
+  <img src="./img/header.png" alt="duck"/>
+</p>
 
 <h1 align="center">annoying-ducky</h1>
 
