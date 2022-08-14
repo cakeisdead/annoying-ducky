@@ -20,11 +20,11 @@ class Boto():
 
     menus = {
                 'active':'main',
-                'main':['Type','OSX Ducky','Win Ducky','Stay-Awake','Automatic-Mode'],
+                'main':['Type','OSX Ducky','WIN Ducky','Stay-Awake','Automatic-Mode','Settings'],
                 'type':[f for f in os.listdir('text_files') if not f.startswith('.')],
                 'osx_ducky':[f for f in os.listdir('osx_ducky') if not f.startswith('.')],
                 'script_actions':['Execute','Add to Playlist'],
-                'auto-mode':['Playlist','Enable Automatic-Mode','Clear Playlist'],
+                'auto-mode':['Start','Playlist','Clear Playlist'], #Start should give you the option to start Now or Next Time device is plugged in
                 'playlist':[]
     }
 
