@@ -18,7 +18,7 @@ class oled:
         self.__i2c = io.I2C(self.__scl_pin, self.__sda_pin)
         self.__display_bus = displayio.I2CDisplay(self.__i2c, device_address=self.__device_address)
         self.display = adafruit_displayio_ssd1306.SSD1306(self.__display_bus, width=wd, height=hg)
-        self.busy_frames('bongo_one.bmp','bongo_two.bmp')
+        self.busy_frames('oled_img/duck_one.bmp','oled_img/duck_two.bmp')
     
     def show_menu(self, lines):
         text_area = label.Label(terminalio.FONT, text=lines)
