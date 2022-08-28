@@ -99,6 +99,17 @@ class Boto():
         
         self.oled.show_menu(self.visible_menu())     
 
+    def execute_single(self, active_script):
+        path, name, type = map(active_script.get, ('path', 'name', 'type'))
+        k = PicoDucky(path + name)
+        if type == 'type':
+            k.plain_text_type(self.oled, self.cancel)
+        else:
+            k.run_script(self.oled, self.cancel)
+        self.menus['active'] = self.active_script['type']
+        self.oled.show_menu(self.visible_menu()) 
+        time.sleep(0.5)
+
     def select_option(self, menu):
 
         if self.menus[menu][1] == 'Type':
@@ -133,14 +144,7 @@ class Boto():
             time.sleep(0.5)
         
         if self.menus[menu][1] == 'Execute':
-            k = PicoDucky(self.active_script['path'] + self.active_script['name'])
-            if self.active_script['type'] == 'type':
-                k.plain_text_type(self.oled, self.cancel)
-            elif self.active_script['type'] == 'osx_ducky':
-                k.run_script(self.oled, self.cancel)
-            self.menus['active'] = self.active_script['type']
-            self.oled.show_menu(self.visible_menu()) 
-            time.sleep(0.5)
+            self.execute_single(self.active_script)
         
         if self.menus[menu][1] == 'Add to Playlist':
             self.add_to_playlist(self.active_script.copy())
