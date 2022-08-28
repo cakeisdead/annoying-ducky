@@ -103,12 +103,28 @@ class Boto():
         path, name, type = map(active_script.get, ('path', 'name', 'type'))
         k = PicoDucky(path + name)
         if type == 'type':
-            k.plain_text_type(self.oled, self.cancel)
+            result = k.plain_text_type(self.oled, self.cancel)
         else:
-            k.run_script(self.oled, self.cancel)
-        self.menus['active'] = self.active_script['type']
+            result = k.run_script(self.oled, self.cancel)
+        self.menus['active'] = type
         self.oled.show_menu(self.visible_menu()) 
         time.sleep(0.5)
+        return result
+    
+    def set_active(self, name, type):
+        self.active_script['name'] = name
+        self.active_script['path'] = 'text_files/' if type == 'type' else 'osx_ducky/'
+        self.active_script['type'] = type
+    
+    def batch_executor(self, playlist):
+        total_scripts = len(playlist)
+        script_ind = 1
+        for script in playlist:
+            self.set_active(script['name'], script['type'])
+            batch_result = self.execute_single(script)
+            script_ind += 1
+            if batch_result == "CANCELLED":
+                break
 
     def select_option(self, menu):
 
@@ -136,9 +152,7 @@ class Boto():
             time.sleep(0.5)
         
         if menu == 'type' or menu == 'osx_ducky':
-            self.active_script['name'] = self.menus[menu][1]
-            self.active_script['path'] = 'text_files/' if menu == 'type' else 'osx_ducky/'
-            self.active_script['type'] = menu
+            self.set_active(self.menus[menu][1], menu)
             self.menus['active'] = 'script_actions'
             self.oled.show_menu(self.visible_menu()) 
             time.sleep(0.5)
@@ -149,6 +163,9 @@ class Boto():
         if self.menus[menu][1] == 'Add to Playlist':
             self.add_to_playlist(self.active_script.copy())
             time.sleep(0.5)
+        
+        if self.menus[menu][1] == 'Start':
+            self.batch_executor(self.playlist)
         
         if self.menus[menu][1] == 'Playlist':
             self.load_playlist()

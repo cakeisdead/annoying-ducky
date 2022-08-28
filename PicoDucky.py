@@ -115,6 +115,7 @@ class PicoDucky:
             sleep(float(self.__default_delay)/1000)
     def plain_text_type(self, oled, cancel_button):
         sleep(3)
+        status = "SUCCESS"
         self.__led.value = True
         file_path = self.__file_path
         with open(file_path,"r",encoding='utf-8') as f:
@@ -123,9 +124,11 @@ class PicoDucky:
                     oled.bongo()
                     self.parseLine('STRING ' + line)
                     if cancel_button.value:
+                        status = "CANCELLED"
                         break
                     self.parseLine('DELAY 250')
         self.__led.value = False
+        return status
     def keep_alive(self, oled):
         win = self.__duckyCommands.get('WINDOWS', None)
         tab = self.__duckyCommands.get('TAB', None)
