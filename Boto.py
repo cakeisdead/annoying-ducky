@@ -162,7 +162,9 @@ class Boto():
         
         if self.menus[menu][1] == 'Add to Playlist':
             self.add_to_playlist(self.active_script.copy())
-            time.sleep(0.5)
+            self.oled.display_message('Added to Playlist')
+            time.sleep(1.5)
+            self.oled.show_menu(self.visible_menu()) 
         
         if self.menus[menu][1] == 'Start':
             self.batch_executor(self.playlist)
