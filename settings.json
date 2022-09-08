@@ -1,0 +1,8 @@
+{
+    "oled":[{
+        "width":128,
+        "height":64
+    }],
+    "auto_mode_status":"on",
+    "default_delay":250    
+}

@@ -1,5 +1,6 @@
 from PicoDucky import PicoDucky
 from Oled import oled
+import json
 import digitalio
 import adafruit_displayio_ssd1306
 import usb_hid
@@ -15,7 +16,7 @@ import terminalio
 from adafruit_display_text import label, wrap_text_to_lines
 
 class Boto():
-
+    settings = {}
     playlist = []
 
     menus = {
@@ -35,8 +36,11 @@ class Boto():
     }
     
     def __init__(self):
+        self.load_settings()
         # Initialize Oled 
-        self.oled = oled(128, 64)    
+        get_oled_props = lambda x: self.settings["oled"][0][x]
+        width, height = map(get_oled_props, ('width','height'))
+        self.oled = oled(width, height)  
         
         # Initialize Buttons
         self.select = digitalio.DigitalInOut(board.GP11)
@@ -73,6 +77,10 @@ class Boto():
                 self.oled.show_menu(self.visible_menu())
                 time.sleep(0.5)
     
+    def load_settings(self):
+        with open('settings.json','r') as config_file:
+            self.settings = json.load(config_file)  
+
     def visible_menu(self):
 
         try:
@@ -101,7 +109,7 @@ class Boto():
 
     def execute_single(self, active_script):
         path, name, type = map(active_script.get, ('path', 'name', 'type'))
-        k = PicoDucky(path + name)
+        k = PicoDucky(path + name, self.settings['default_delay'])
         if type == 'type':
             result = k.plain_text_type(self.oled, self.cancel)
         else:

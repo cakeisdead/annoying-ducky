@@ -13,7 +13,7 @@ import digitalio
 from board import *
 
 class PicoDucky:
-    __default_delay = 50
+    __default_delay = 0
     __led = digitalio.DigitalInOut(LED)
     __duckyCommands = {
         'WINDOWS': Keycode.WINDOWS, 'GUI': Keycode.GUI,
@@ -39,8 +39,9 @@ class PicoDucky:
         'F12': Keycode.F12,
     }
 
-    def __init__(self, file_path="", file_type = ""):
+    def __init__(self, file_path="", default_delay=50):
         self.__file_path = file_path
+        self.__default_delay = default_delay
         self.__kbd = Keyboard(usb_hid.devices)
         self.__layout = KeyboardLayout(self.__kbd)
         self.__led.direction = digitalio.Direction.OUTPUT
@@ -113,6 +114,7 @@ class PicoDucky:
             if cancel_button.value:
                 break
             sleep(float(self.__default_delay)/1000)
+            
     def plain_text_type(self, oled, cancel_button):
         sleep(3)
         status = "SUCCESS"
@@ -126,9 +128,10 @@ class PicoDucky:
                     if cancel_button.value:
                         status = "CANCELLED"
                         break
-                    self.parseLine('DELAY 250')
+                    self.parseLine(f'DELAY {str(self.__default_delay)}')
         self.__led.value = False
         return status
+
     def keep_alive(self, oled):
         win = self.__duckyCommands.get('WINDOWS', None)
         tab = self.__duckyCommands.get('TAB', None)
