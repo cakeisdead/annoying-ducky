@@ -82,7 +82,6 @@ class Boto():
             self.settings = json.load(config_file)  
 
     def visible_menu(self):
-
         try:
             lines = '  ' + self.menus[self.menus['active']][0] + '\n'
             lines += '> ' + self.menus[self.menus['active']][1] + '\n'
@@ -91,11 +90,30 @@ class Boto():
             pass
         return lines
     
+    def save_playlist_changes(self):
+        with open('playlist.json','w') as output:
+            json.dump(self.playlist, output)
+
     def add_to_playlist(self, script):
         self.playlist.append(script)
+        self.save_playlist_changes()
     
+    def clear_playlist(self):
+        self.playlist = []
+        self.save_playlist_changes()
+
     def load_playlist(self):
-        self.menus['playlist'] = [str(i) + " " + f['name'] for i, f in enumerate(self.playlist, 1)]
+        with open('playlist.json','r') as playlist:
+            self.playlist = json.load(playlist)  
+        
+        if self.playlist != []:
+            self.menus['playlist'] = [str(i) + " " + f['name'] for i, f in enumerate(self.playlist, 1)]
+            self.menus['active'] = 'playlist'
+        else:
+            self.oled.display_message('Playlist is empty')
+            time.sleep(1)
+            self.menus['active'] = 'auto-mode'
+            
     
     def menu_nav(self, active_menu, direction):
 
@@ -174,12 +192,17 @@ class Boto():
             time.sleep(1.5)
             self.oled.show_menu(self.visible_menu()) 
         
+        if self.menus[menu][1] == 'Clear Playlist':
+            self.clear_playlist()
+            self.oled.display_message('Playlist cleared')
+            time.sleep(1.5)
+            self.oled.show_menu(self.visible_menu())
+        
         if self.menus[menu][1] == 'Start':
             self.batch_executor(self.playlist)
         
         if self.menus[menu][1] == 'Playlist':
             self.load_playlist()
-            self.menus['active'] = 'playlist'
             self.oled.show_menu(self.visible_menu())
             time.sleep(0.5)
         
