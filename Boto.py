@@ -26,6 +26,7 @@ class Boto():
                 'osx_ducky':[f for f in os.listdir('osx_ducky') if not f.startswith('.')],
                 'script_actions':['Execute','Add to Playlist'],
                 'auto-mode':['Start','Playlist','Clear Playlist'], #Start should give you the option to start Now or Next Time device is plugged in
+                'settings':['Delay','Auto-Mode'],
                 'playlist':[]
     }
 
@@ -80,6 +81,10 @@ class Boto():
     def load_settings(self):
         with open('settings.json','r') as config_file:
             self.settings = json.load(config_file)  
+    
+    def save_settings(self):
+        with open('settings.json','w') as config_file:
+            json.dumps(self.settings, config_file)
 
     def visible_menu(self):
         try:
@@ -174,6 +179,11 @@ class Boto():
 
         if self.menus[menu][1] == 'Automatic-Mode':
             self.menus['active'] = 'auto-mode'
+            self.oled.show_menu(self.visible_menu())
+            time.sleep(0.5)
+
+        if self.menus[menu][1] == 'Settings':
+            self.menus['active'] = 'settings'
             self.oled.show_menu(self.visible_menu())
             time.sleep(0.5)
         
