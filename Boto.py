@@ -4,7 +4,7 @@ import digitalio
 import adafruit_displayio_ssd1306
 import usb_hid
 from adafruit_hid.mouse import Mouse
-from board import *
+from board import
 import board
 import os
 import busio as io

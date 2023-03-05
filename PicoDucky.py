@@ -100,7 +100,7 @@ class PicoDucky:
         duckyScriptPath = self.__file_path
         f = open(duckyScriptPath,"r",encoding='utf-8')
         previousLine = ""
-        for line in f: 
+        for line in f:
             oled.bongo()
             line = line.rstrip()
             if(line[0:6] == "REPEAT"):
@@ -114,7 +114,7 @@ class PicoDucky:
             if cancel_button.value:
                 break
             sleep(float(self.__default_delay)/1000)
-            
+
     def plain_text_type(self, oled, cancel_button):
         sleep(3)
         status = "SUCCESS"
@@ -133,8 +133,10 @@ class PicoDucky:
         return status
 
     def keep_alive(self, oled):
+        """Switch between windows with ctrl tab to prevent locking"""
         win = self.__duckyCommands.get('WINDOWS', None)
         tab = self.__duckyCommands.get('TAB', None)
         self.__kbd.press(win, tab)
         self.__kbd.release_all()
         oled.bongo()
+        
